@@ -53,6 +53,12 @@
   .hud-item{color:rgba(245,245,240,0.5);letter-spacing:0.08em;}
   .hud-item span{color:var(--bull-gold);font-weight:700;}
   canvas#gameCanvas{display:block;width:100%;background:#0d0d0d;}
+  #fullscreen-btn{background:var(--mid);border:1px solid rgba(243,156,18,0.3);color:var(--bull-gold);border-radius:4px;width:30px;height:30px;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s,border-color 0.15s;flex-shrink:0;}
+  #fullscreen-btn:hover{background:rgba(243,156,18,0.15);border-color:var(--bull-gold);}
+  #game-wrapper:fullscreen{display:flex;flex-direction:column;justify-content:center;background:var(--black);}
+  #game-wrapper:-webkit-full-screen{display:flex;flex-direction:column;justify-content:center;background:var(--black);}
+  #game-wrapper:fullscreen canvas#gameCanvas{width:auto;height:auto;max-width:100vw;max-height:calc(100vh - 48px);margin:0 auto;}
+  #game-wrapper:-webkit-full-screen canvas#gameCanvas{width:auto;height:auto;max-width:100vw;max-height:calc(100vh - 48px);margin:0 auto;}
   #game-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,10,10,0.97);text-align:center;padding:1.25rem;padding-top:60px;gap:0.5rem;z-index:10;overflow-y:auto;}
   #game-overlay h2{font-size:2rem;font-weight:900;}
   #game-overlay p{color:rgba(245,245,240,0.5);font-size:0.9rem;}
@@ -208,8 +214,9 @@
         <div class="hud-item">SCORE <span id="hud-score">0</span></div>
         <div class="hud-item">BULL RUN</div>
         <div class="hud-item">BEST <span id="hud-best">0</span></div>
+        <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
       </div>
-      <canvas id="gameCanvas" width="800" height="320"></canvas>
+      <canvas id="gameCanvas" width="1100" height="420"></canvas>
 
       <div id="game-overlay">
         <div id="screen-start">
@@ -408,19 +415,57 @@ const overlayScore = document.getElementById('overlay-score');
 const usernameInput  = document.getElementById('username-input');
 const usernameError  = document.getElementById('username-error');
 
+const W=1100, H=420;
 let currentPlayer = localStorage.getItem('ansem_player') || '';
+const gameWrapperEl = document.getElementById('game-wrapper');
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
 
 function resizeCanvas(){
+  if (isFullscreen()){
+    const availH = window.innerHeight - 48; // minus HUD bar height
+    const availW = window.innerWidth;
+    const ratio = Math.min(availW / W, availH / H);
+    canvas.style.width  = (W * ratio) + 'px';
+    canvas.style.height = (H * ratio) + 'px';
+    return;
+  }
   const w = canvas.parentElement.clientWidth;
   if (!w) { requestAnimationFrame(resizeCanvas); return; }
   canvas.style.width  = w + 'px';
-  canvas.style.height = Math.min(320, w * 0.4) + 'px';
+  canvas.style.height = Math.min(560, w * (H/W)) + 'px';
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-const W=800, H=320;
-const GROUND = H - 60;
+function toggleFullscreen(){
+  if (!isFullscreen()){
+    const req = gameWrapperEl.requestFullscreen || gameWrapperEl.webkitRequestFullscreen;
+    if (req) req.call(gameWrapperEl);
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit) exit.call(document);
+  }
+}
+['fullscreenchange','webkitfullscreenchange'].forEach(evt=>{
+  document.addEventListener(evt, () => {
+    if (fullscreenBtn) fullscreenBtn.textContent = isFullscreen() ? '✕' : '⛶';
+    resizeCanvas();
+  });
+});
+
+// Render at native device pixel ratio so the bigger play area stays crisp
+// instead of blurry when CSS stretches the canvas up.
+(function setupHiDPI(){
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+})();
+const GROUND = H - 90;
 const GRAVITY = 0.55;
 const JUMP = -12;
 
@@ -430,14 +475,15 @@ const JUMP = -12;
    jumping always cleared it — ducking was never actually required.
    Fix: the flying obstacle's solid body now runs from near the very top of
    the canvas (FLYING_TOP) down to just above the ducking hitbox's top edge
-   (FLYING_BODY_BOTTOM = 232, vs the duck hitbox top of 234). That means:
+   (FLYING_BODY_BOTTOM, derived from GROUND so it keeps working if the
+   canvas size changes). That means:
    - Standing or jumping: the bull's hitbox is always inside [FLYING_TOP,
      FLYING_BODY_BOTTOM] at some point while the obstacle's x overlaps it —
      no height clears it.
-   - Ducking: the duck hitbox top (234) sits just below the obstacle's
-     bottom edge (232), so there's a real gap to pass under. */
-const FLYING_TOP = 8;
-const FLYING_BODY_BOTTOM = 232;
+   - Ducking: the duck hitbox top sits just below the obstacle's
+     bottom edge, so there's a real gap to pass under. */
+const FLYING_TOP = 10;
+const FLYING_BODY_BOTTOM = GROUND - 28;
 
 let state = 'idle';
 let score = 0, frame = 0, speed = 5, coinBonus = 0;
@@ -483,6 +529,33 @@ const COLLECTIBLE_DEFS=[
 let nextObs=80, nextColl=140;
 let clouds=[{x:200,y:40,s:0.7},{x:450,y:20,s:1},{x:680,y:55,s:0.5}];
 
+/* Sky banners: occasional skywriting-plane ads that fly across the
+   background, towing a trailing banner with an $ANSEM message. They sit
+   purely in the backdrop (no collision) so the clouds aren't the only
+   thing happening up there while the bull runs. A small blimp variant is
+   mixed in for visual variety. */
+const BANNER_MESSAGES = [
+  'BUY $ANSEM THE BLACK BULL 🐂',
+  'THE COLDEST MAN BREATHING',
+  '$ANSEM TO THE MOON 🚀',
+  'APE IN NOW ON PUMP.FUN',
+];
+let skyBanners = [];
+let nextBanner = 260;
+
+function spawnBanner(){
+  const msg = BANNER_MESSAGES[Math.floor(Math.random()*BANNER_MESSAGES.length)];
+  const kind = Math.random() < 0.3 ? 'blimp' : 'plane';
+  skyBanners.push({
+    x: W + 60,
+    y: 22 + Math.random()*44,
+    msg,
+    kind,
+    w: kind==='blimp' ? (70 + msg.length*6.5) : (44 + msg.length*6.5),
+    bob: Math.random()*Math.PI*2,
+  });
+}
+
 function spawnObstacle(){
   const pool = frame > 400 ? OBS_TYPES : OBS_TYPES.filter(t => !t.flying);
   const t = pool[Math.floor(Math.random()*pool.length)];
@@ -503,9 +576,9 @@ function spawnParticle(x,y,color='#f39c12'){
 }
 function reset(){
   score=0;frame=0;speed=5;coinBonus=0;
-  obstacles=[];collectibles=[];particles=[];
+  obstacles=[];collectibles=[];particles=[];skyBanners=[];
   bull.y=GROUND;bull.vy=0;bull.grounded=true;bull.ducking=false;
-  nextObs=80;nextColl=140;
+  nextObs=80;nextColl=140;nextBanner=200;
 }
 function handleStart(){
   let name = (usernameInput ? usernameInput.value.trim() : currentPlayer) || currentPlayer;
@@ -697,6 +770,63 @@ function drawCloud(cx,cy,s){
   ctx.beginPath();ctx.ellipse(cx-25*s,cy+6*s,35*s,16*s,0,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(cx+25*s,cy+8*s,30*s,14*s,0,0,Math.PI*2);ctx.fill();
 }
+function drawBanner(b,f){
+  const bobY = b.y + Math.sin(f*0.04 + b.bob)*3;
+  ctx.save();
+  ctx.font = "bold 10px 'Space Mono', monospace";
+  ctx.textBaseline = 'middle';
+
+  if(b.kind === 'blimp'){
+    // Small airship body towing the message directly on its hull.
+    const bw = b.w, bh = 24;
+    const cx = b.x - bw/2;
+    ctx.fillStyle = '#1a1a1a';
+    ctx.strokeStyle = '#f39c12';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(cx, bobY, bw/2, bh/2, 0, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    // tail fin
+    ctx.beginPath();
+    ctx.moveTo(cx+bw/2-4, bobY-bh/2+2);
+    ctx.lineTo(cx+bw/2+10, bobY-bh/2-6);
+    ctx.lineTo(cx+bw/2+10, bobY+bh/2+6);
+    ctx.lineTo(cx+bw/2-4, bobY+bh/2-2);
+    ctx.closePath();
+    ctx.fillStyle = '#c0392b';
+    ctx.fill();
+    ctx.fillStyle = '#f39c12';
+    ctx.textAlign = 'center';
+    ctx.fillText(b.msg, cx, bobY);
+  } else {
+    // Skywriting plane towing a rectangular banner behind it (banner trails
+    // to the right since the plane is flying leftward).
+    const px = b.x, py = bobY;
+    ctx.fillStyle = '#e8e8e8';
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px-16, py-5);
+    ctx.lineTo(px-16, py+5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#c0392b';
+    ctx.fillRect(px-16, py-1.5, 7, 3);
+    ctx.strokeStyle = 'rgba(245,245,240,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px+3, py); ctx.lineTo(px+20, py); ctx.stroke();
+    const bw = b.w, bh = 20;
+    ctx.fillStyle = '#f39c12';
+    ctx.fillRect(px+20, py-bh/2, bw, bh);
+    ctx.strokeStyle = '#c0392b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(px+20, py-bh/2, bw, bh);
+    ctx.fillStyle = '#0a0a0a';
+    ctx.textAlign = 'left';
+    ctx.fillText(b.msg, px+25, py+1);
+  }
+  ctx.restore();
+  ctx.textAlign = 'left';
+}
 function gameLoop(){
   requestAnimationFrame(gameLoop);
   ctx.fillStyle='#0d0d0d';
@@ -708,6 +838,7 @@ function gameLoop(){
     if(state==='running'){c.x-=speed*0.3;}
     if(c.x<-100){c.x=W+100;c.y=20+Math.random()*60;}
   });
+  skyBanners.forEach(b=>drawBanner(b,frame));
   ctx.fillStyle='rgba(243,156,18,0.7)';
   ctx.fillRect(0,GROUND+4,W,3);
   ctx.fillStyle='rgba(243,156,18,0.12)';
@@ -719,6 +850,7 @@ function gameLoop(){
     hudScore.textContent=score;
     if(--nextObs<=0){spawnObstacle();nextObs=Math.floor(80+Math.random()*60);}
     if(--nextColl<=0){spawnCollectible();nextColl=Math.floor(100+Math.random()*80);}
+    if(--nextBanner<=0){spawnBanner();nextBanner=Math.floor(260+Math.random()*180);}
     bull.update();
     bull.duck(performance.now() < duckActiveUntil);
     const bh = bull.hitbox;
@@ -737,6 +869,7 @@ function gameLoop(){
     }
     obstacles=obstacles.filter(o=>{o.x-=speed;return o.x>-80;});
     collectibles=collectibles.filter(c=>{c.x-=speed;return c.x>-50;});
+    skyBanners=skyBanners.filter(b=>{b.x-=speed*0.45;return b.x>-(b.w+260);});
   }
   obstacles.forEach(o=>drawCandle(o));
   collectibles.forEach(c=>drawCoin(c,frame));
@@ -775,7 +908,7 @@ document.addEventListener('keyup',e=>{keys[e.code]=false;keys[e.key]=false;});
 // canvas itself on mobile) rather than being held. A successful double-tap
 // activates ducking for a fixed window of time, long enough to clear the
 // resistance bar at current game speed.
-const DOUBLE_TAP_MS = 170;
+const DOUBLE_TAP_MS = 150;
 const DUCK_WINDOW_MS = 650;
 let duckActiveUntil = 0;
 let lastDuckKeyTime = 0;
