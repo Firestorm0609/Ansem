@@ -171,7 +171,8 @@
     align-items:flex-start;
   }
   #game-layout #game-wrapper{
-    flex:1 1 0;
+    flex:1 1 auto;
+    width:100%;
     min-width:0;
   }
 
@@ -515,8 +516,6 @@
 
         <!-- START SCREEN -->
         <div id="screen-start">
-          <h2>Bull Run</h2>
-          <p>Dodge bear candles · collect SOL coins · go global</p>
           <div class="username-row">
             <div class="username-field">
               <span class="username-at">@</span>
@@ -605,10 +604,8 @@ const SUPABASE_URL  = 'https://ubnfovllwlglqfvlcxxk.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibmZvdmxsd2xnbHFmdmxjeHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjU4MjcsImV4cCI6MjA5ODM0MTgyN30.ksCdXPC7y6BR-yGDlOZsOyLfK3hTg2Eicx8GcpUTHNI';
 
 // ─── Realtime Presence: real count of people with the page open right now ───
-const sbClient = window.supabase
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
-  : null;
-
+// Wrapped defensively: a failure here (blocked CDN, insecure context, etc.)
+// must never stop the rest of the script (game, leaderboard) from running.
 const lbOnlineEl = document.getElementById('lb-online');
 
 function setOnlineCount(n){
@@ -616,24 +613,38 @@ function setOnlineCount(n){
   lbOnlineEl.innerHTML = `<span>${n}</span> ${n===1?'person':'people'} playing now`;
 }
 
-if (sbClient) {
-  const presenceChannel = sbClient.channel('ansem-presence', {
-    config: { presence: { key: crypto.randomUUID() } }
-  });
+function safeId(){
+  try { return crypto.randomUUID(); }
+  catch(e) { return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2); }
+}
 
-  presenceChannel
-    .on('presence', { event: 'sync' }, () => {
-      const state = presenceChannel.presenceState();
-      // presenceState groups by key; count of distinct keys = distinct visitors
-      const count = Object.keys(state).length;
-      setOnlineCount(count);
-    })
-    .subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await presenceChannel.track({ online_at: new Date().toISOString() });
-      }
+try {
+  const sbClient = window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+    : null;
+
+  if (sbClient) {
+    const presenceChannel = sbClient.channel('ansem-presence', {
+      config: { presence: { key: safeId() } }
     });
-} else {
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        try {
+          const state = presenceChannel.presenceState();
+          setOnlineCount(Object.keys(state).length);
+        } catch(e) { setOnlineCount(0); }
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          try { await presenceChannel.track({ online_at: new Date().toISOString() }); }
+          catch(e) {}
+        }
+      });
+  } else {
+    setOnlineCount(0);
+  }
+} catch(e) {
   setOnlineCount(0);
 }
 
@@ -763,6 +774,7 @@ let currentPlayer = localStorage.getItem('ansem_player') || '';
 // Responsive canvas
 function resizeCanvas(){
   const w = canvas.parentElement.clientWidth;
+  if (!w) { requestAnimationFrame(resizeCanvas); return; }
   canvas.style.width  = w + 'px';
   canvas.style.height = Math.min(320, w * 0.4) + 'px';
 }
