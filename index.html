@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>$ANSEM — The Black Bull</title>
+<meta property="og:title" content="$ANSEM — The Black Bull"/>
+<meta property="og:description" content="The most based bull on Solana. We don't rug. We only run."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="$ANSEM — The Black Bull"/>
+<meta name="twitter:description" content="The most based bull on Solana. We don't rug. We only run."/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  :root{
+    --black:#0a0a0a;
+    --bull-red:#c0392b;
+    --bull-gold:#f39c12;
+    --sol-purple:#9945FF;
+    --sol-green:#14F195;
+    --white:#f5f5f0;
+    --gray:#1a1a1a;
+    --mid:#2a2a2a;
+  }
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Space Grotesk',sans-serif;
+    overflow-x:hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1rem 2rem;
+    background:rgba(10,10,10,0.85);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(243,156,18,0.2);
+  }
+  .nav-logo{
+    font-weight:900;font-size:1.1rem;letter-spacing:0.05em;
+    color:var(--bull-gold);
+    display:flex;align-items:center;gap:8px;
+  }
+  .nav-links{display:flex;gap:1.5rem;align-items:center;}
+  .nav-links a{
+    color:rgba(245,245,240,0.6);text-decoration:none;
+    font-size:0.85rem;font-weight:500;letter-spacing:0.05em;
+    transition:color 0.2s;
+  }
+  .nav-links a:hover{color:var(--bull-gold);}
+  /* ─── HERO ─── */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+    padding:8rem 2rem 4rem;
+    position:relative;overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 60%, rgba(192,57,43,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 20% 80%, rgba(153,69,255,0.08) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .hero-bull{
+    font-size:clamp(6rem,18vw,14rem);
+    line-height:1;
+    margin-bottom:0.5rem;
+    filter:drop-shadow(0 0 40px rgba(192,57,43,0.4));
+    animation:breathe 3s ease-in-out infinite;
+    user-select:none;
+  }
+  @keyframes breathe{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.04);}
+  }
+  .hero-title{
+    font-size:clamp(2.5rem,8vw,6rem);
+    font-weight:900;line-height:0.95;
+    letter-spacing:-0.02em;
+    margin-bottom:1rem;
+  }
+  .hero-title span{color:var(--bull-gold);}
+  .hero-sub{
+    font-size:clamp(1rem,2.5vw,1.3rem);
+    color:rgba(245,245,240,0.5);
+    max-width:480px;margin:0 auto 2.5rem;
+    font-weight:400;line-height:1.6;
+  }
+  .hero-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--bull-gold);color:var(--black);
+    padding:0.85rem 2rem;border-radius:4px;
+    font-weight:700;font-size:0.95rem;letter-spacing:0.03em;
+    text-decoration:none;border:none;cursor:pointer;
+    transition:opacity 0.15s,transform 0.15s;display:inline-block;
+  }
+  .btn-primary:hover{opacity:0.88;transform:translateY(-1px);}
+  .btn-secondary{
+    background:transparent;color:var(--white);
+    padding:0.85rem 2rem;border-radius:4px;
+    font-weight:700;font-size:0.95rem;letter-spacing:0.03em;
+    text-decoration:none;border:1px solid rgba(245,245,240,0.25);cursor:pointer;
+    transition:border-color 0.15s,transform 0.15s;display:inline-block;
+  }
+  .btn-secondary:hover{border-color:var(--white);transform:translateY(-1px);}
+
+  /* ─── CA BAR ─── */
+  .ca-bar{
+    background:var(--gray);
+    border:1px solid rgba(243,156,18,0.3);
+    border-radius:6px;
+    padding:0.7rem 1.2rem;
+    display:inline-flex;align-items:center;gap:0.8rem;
+    margin-top:2rem;
+  }
+  .ca-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.15em;
+    color:var(--bull-gold);text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .ca-addr{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;color:rgba(245,245,240,0.55);
+    word-break:break-all;
+  }
+  .ca-copy{
+    background:none;border:none;color:var(--bull-gold);
+    cursor:pointer;font-size:1rem;padding:0 0.2rem;
+    flex-shrink:0;transition:opacity 0.2s;
+  }
+  .ca-copy:hover{opacity:0.7;}
+
+  /* ─── GAME SECTION ─── */
+  #game-section{
+    padding:5rem 2rem;
+    max-width:900px;margin:0 auto;
+  }
+  .section-eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.25em;
+    color:var(--bull-gold);text-transform:uppercase;
+    margin-bottom:0.75rem;
+  }
+  .section-title{
+    font-size:clamp(1.8rem,5vw,3rem);
+    font-weight:900;line-height:1;
+    margin-bottom:1rem;
+  }
+  .section-desc{
+    color:rgba(245,245,240,0.5);
+    font-size:1rem;line-height:1.6;
+    margin-bottom:2rem;max-width:500px;
+  }
+
+  /* ─── GAME CANVAS ─── */
+  #game-wrapper{
+    background:var(--gray);
+    border:1px solid rgba(243,156,18,0.2);
+    border-radius:8px;
+    overflow:hidden;
+    position:relative;
+  }
+  #game-hud{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 1rem;
+    height:48px;
+    background:rgba(0,0,0,0.8);
+    border-bottom:1px solid rgba(243,156,18,0.25);
+    font-family:'Space Mono',monospace;font-size:0.75rem;
+    position:relative;z-index:2;
+  }
+  .hud-item{color:rgba(245,245,240,0.5);letter-spacing:0.08em;}
+  .hud-item span{color:var(--bull-gold);font-weight:700;}
+  canvas#gameCanvas{
+    display:block;width:100%;
+    background:#0d0d0d;
+  }
+  #game-overlay{
+    position:absolute;inset:0;top:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(10,10,10,0.97);
+    text-align:center;padding:2rem;
+    padding-top:64px;
+    gap:0.75rem;
+    z-index:10;
+  }
+  #game-overlay h2{
+    font-size:2rem;font-weight:900;
+  }
+  #game-overlay p{
+    color:rgba(245,245,240,0.5);font-size:0.9rem;
+  }
+  #game-overlay .score-display{
+    font-family:'Space Mono',monospace;
+    font-size:1.1rem;color:var(--bull-gold);margin-bottom:1.5rem;
+  }
+  .game-controls{
+    display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;
+    margin-top:0.5rem;
+  }
+  .key-hint{
+    background:var(--mid);border:1px solid rgba(245,245,240,0.15);
+    border-radius:4px;padding:0.3rem 0.6rem;
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    color:rgba(245,245,240,0.5);
+  }
+
+  /* ─── HOW TO BUY ─── */
+  #buy-section{
+    padding:5rem 2rem;
+    max-width:900px;margin:0 auto;
+    border-top:1px solid rgba(245,245,240,0.06);
+  }
+  .steps{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:1rem;margin-top:2rem;
+  }
+  .step{
+    background:var(--gray);
+    border:1px solid rgba(245,245,240,0.07);
+    border-radius:6px;padding:1.5rem;
+    position:relative;
+  }
+  .step-num{
+    font-family:'Space Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.2em;
+    color:var(--bull-gold);margin-bottom:0.75rem;
+  }
+  .step h3{font-size:1rem;font-weight:700;margin-bottom:0.4rem;}
+  .step p{font-size:0.82rem;color:rgba(245,245,240,0.45);line-height:1.5;}
+  .step a{color:var(--sol-green);text-decoration:none;}
+  .step a:hover{text-decoration:underline;}
+
+  /* ─── FOOTER ─── */
+  footer{
+    border-top:1px solid rgba(245,245,240,0.06);
+    padding:2rem;text-align:center;
+    font-size:0.75rem;color:rgba(245,245,240,0.25);
+    line-height:1.8;
+  }
+  footer a{color:rgba(245,245,240,0.35);text-decoration:none;}
+  footer a:hover{color:var(--bull-gold);}
+
+  @media(max-width:600px){
+    nav{padding:0.75rem 1rem;}
+    .ca-addr{font-size:0.6rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:20px;" aria-hidden="true">
+      <path d="M88,195 Q52,162 64,122 Q78,96 98,112" fill="none" stroke="#f39c12" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="96" cy="109" rx="13" ry="9" fill="#f39c12" transform="rotate(-30 96 109)"/>
+      <ellipse cx="225" cy="215" rx="148" ry="86" fill="#111"/>
+      <ellipse cx="225" cy="215" rx="148" ry="86" fill="none" stroke="#f39c12" stroke-width="1.5" opacity="0.45"/>
+      <ellipse cx="308" cy="148" rx="58" ry="42" fill="#111"/>
+      <path d="M318,168 Q352,145 375,158 Q384,178 362,193 Q335,198 318,182Z" fill="#111"/>
+      <rect x="360" y="138" width="100" height="100" rx="20" fill="#111"/>
+      <rect x="360" y="138" width="100" height="100" rx="20" fill="none" stroke="#f39c12" stroke-width="2"/>
+      <ellipse cx="372" cy="152" rx="13" ry="20" fill="#111" stroke="#f39c12" stroke-width="1.5" transform="rotate(-18 372 152)"/>
+      <ellipse cx="455" cy="218" rx="24" ry="17" fill="#181818" stroke="#f39c12" stroke-width="1.5"/>
+      <ellipse cx="447" cy="220" rx="4.5" ry="3.5" fill="#2a2a2a"/>
+      <ellipse cx="461" cy="220" rx="4.5" ry="3.5" fill="#2a2a2a"/>
+      <circle cx="454" cy="225" r="7" fill="none" stroke="#f39c12" stroke-width="2.5"/>
+      <circle cx="408" cy="168" r="11" fill="#14F195"/>
+      <circle cx="410" cy="169" r="5.5" fill="#0a0a0a"/>
+      <circle cx="407" cy="165" r="2.5" fill="rgba(255,255,255,0.55)"/>
+      <path d="M378,140 Q356,82 398,68 Q404,104 388,138Z" fill="#f39c12"/>
+      <path d="M412,137 Q438,76 468,90 Q456,122 430,140Z" fill="#f39c12"/>
+      <rect x="115" y="286" width="26" height="48" rx="7" fill="#111"/>
+      <rect x="156" y="286" width="26" height="48" rx="7" fill="#111"/>
+      <rect x="258" y="286" width="26" height="48" rx="7" fill="#111"/>
+      <rect x="299" y="286" width="26" height="48" rx="7" fill="#111"/>
+      <rect x="113" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+      <rect x="154" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+      <rect x="256" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+      <rect x="297" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+    </svg>
+    $ANSEM
+  </div>
+  <div class="nav-links">
+    <a href="#game-section">Play</a>
+    <a href="#buy-section">Buy</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-bull" id="hero-bull-wrap">
+    <!-- Inline SVG black bull — no external dependency, always renders -->
+    <svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg"
+         style="width:clamp(240px,46vw,440px);height:auto;filter:drop-shadow(0 0 32px rgba(192,57,43,0.4));"
+         aria-label="Ansem the Black Bull">
+
+      <!-- Tail -->
+      <path d="M88,195 Q52,162 64,122 Q78,96 98,112"
+            fill="none" stroke="#f39c12" stroke-width="5" stroke-linecap="round"/>
+      <!-- Tail tuft -->
+      <ellipse cx="96" cy="109" rx="13" ry="9" fill="#f39c12" transform="rotate(-30 96 109)"/>
+
+      <!-- Body -->
+      <ellipse cx="225" cy="215" rx="148" ry="86" fill="#111"/>
+      <ellipse cx="225" cy="215" rx="148" ry="86" fill="none" stroke="#f39c12" stroke-width="1.5" opacity="0.45"/>
+
+      <!-- Shoulder hump -->
+      <ellipse cx="308" cy="148" rx="58" ry="42" fill="#111"/>
+
+      <!-- Neck (connects body to head) -->
+      <path d="M318,168 Q352,145 375,158 Q384,178 362,193 Q335,198 318,182Z" fill="#111"/>
+
+      <!-- Head -->
+      <rect x="360" y="138" width="100" height="100" rx="20" fill="#111"/>
+      <rect x="360" y="138" width="100" height="100" rx="20" fill="none" stroke="#f39c12" stroke-width="2"/>
+
+      <!-- Ear -->
+      <ellipse cx="372" cy="152" rx="13" ry="20" fill="#111" stroke="#f39c12" stroke-width="1.5"
+               transform="rotate(-18 372 152)"/>
+
+      <!-- Snout / muzzle -->
+      <ellipse cx="455" cy="218" rx="24" ry="17" fill="#181818" stroke="#f39c12" stroke-width="1.5"/>
+      <!-- Nostrils -->
+      <ellipse cx="447" cy="220" rx="4.5" ry="3.5" fill="#2a2a2a"/>
+      <ellipse cx="461" cy="220" rx="4.5" ry="3.5" fill="#2a2a2a"/>
+      <!-- Nose ring -->
+      <circle cx="454" cy="225" r="7" fill="none" stroke="#f39c12" stroke-width="2.5"/>
+
+      <!-- Eye -->
+      <circle cx="408" cy="168" r="11" fill="#14F195"/>
+      <circle cx="410" cy="169" r="5.5" fill="#0a0a0a"/>
+      <circle cx="407" cy="165" r="2.5" fill="rgba(255,255,255,0.55)"/>
+
+      <!-- Horns -->
+      <path d="M378,140 Q356,82 398,68 Q404,104 388,138Z" fill="#f39c12"/>
+      <path d="M412,137 Q438,76 468,90 Q456,122 430,140Z" fill="#f39c12"/>
+
+      <!-- Belly shadow line -->
+      <path d="M105,272 Q225,305 348,272" fill="none" stroke="#1e1e1e" stroke-width="2"/>
+
+      <!-- Legs — back pair -->
+      <rect x="115" y="286" width="26" height="48" rx="7" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
+      <rect x="156" y="286" width="26" height="48" rx="7" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
+      <!-- Hooves back -->
+      <rect x="113" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+      <rect x="154" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+
+      <!-- Legs — front pair -->
+      <rect x="258" y="286" width="26" height="48" rx="7" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
+      <rect x="299" y="286" width="26" height="48" rx="7" fill="#111" stroke="#1e1e1e" stroke-width="1"/>
+      <!-- Hooves front -->
+      <rect x="256" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+      <rect x="297" y="328" width="30" height="11" rx="5" fill="#f39c12"/>
+
+      <!-- Subtle chest highlight -->
+      <path d="M355,185 Q338,215 340,248" fill="none" stroke="rgba(243,156,18,0.2)" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1 class="hero-title">Ansem the<br><span>Black Bull</span></h1>
+  <p class="hero-sub">The most based bull on Solana. We don't rug. We only run.</p>
+  <div class="hero-ctas">
+    <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank" class="btn-primary">Buy $ANSEM on Pump.fun</a>
+    <button class="btn-secondary" onclick="document.getElementById('game-section').scrollIntoView({behavior:'smooth'});setTimeout(startGame,600);">Play Bull Run 🎮</button>
+  </div>
+  <div class="ca-bar">
+    <span class="ca-label">CA</span>
+    <span class="ca-addr" id="ca-text">9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump</span>
+    <button class="ca-copy" onclick="copyCA()" title="Copy address">📋</button>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="game-section">
+  <p class="section-eyebrow">Minigame</p>
+  <h2 class="section-title">Bull Run</h2>
+  <p class="section-desc">Dodge bear candles. Collect SOL coins. How long can the bull run?</p>
+
+  <div id="game-wrapper">
+    <div id="game-hud">
+      <div class="hud-item">SCORE <span id="hud-score">0</span></div>
+      <div class="hud-item">BULL RUN</div>
+      <div class="hud-item">BEST <span id="hud-best">0</span></div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="320"></canvas>
+    <div id="game-overlay">
+      <h2 id="overlay-title">Bull Run</h2>
+      <p id="overlay-sub">Dodge bear candles &amp; collect SOL coins for bonus points.</p>
+      <div class="score-display" id="overlay-score" style="display:none"></div>
+      <button class="btn-primary" onclick="startGame()" id="start-btn">Start Running</button>
+      <div class="game-controls" style="margin-top:1rem">
+        <span class="key-hint">SPACE / ↑ — Jump</span>
+        <span class="key-hint">↓ — Duck</span>
+        <span class="key-hint">TAP — Jump</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUY -->
+<section id="buy-section">
+  <p class="section-eyebrow">How to Buy</p>
+  <h2 class="section-title">Get $ANSEM</h2>
+  <p class="section-desc">Three steps to ride the bull.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01 — WALLET</div>
+      <h3>Get Phantom</h3>
+      <p>Download <a href="https://phantom.app" target="_blank">phantom.app</a> and create a Solana wallet. Takes 2 minutes.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02 — SOL</div>
+      <h3>Load up SOL</h3>
+      <p>Buy SOL on Coinbase, Binance, or Kraken, then send it to your Phantom wallet.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03 — SWAP</div>
+      <h3>Ape in</h3>
+      <p>Go to <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank">pump.fun</a>, paste the CA, and swap. Set slippage to 5–10%.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">CA</div>
+      <h3>Contract Address</h3>
+      <p style="word-break:break-all;font-family:'Space Mono',monospace;font-size:0.7rem;color:rgba(245,245,240,0.6)">9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump</p>
+    </div>
+  </div>
+  <div style="margin-top:2rem;text-align:center">
+    <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank" class="btn-primary" style="font-size:1rem;padding:1rem 2.5rem">Buy $ANSEM on Pump.fun ↗</a>
+  </div>
+</section>
+
+<footer>
+  <p>$ANSEM is a community meme token on Solana. Not financial advice. DYOR.</p>
+  <p style="margin-top:0.5rem">
+    <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank">Pump.fun</a> ·
+    <a href="https://solscan.io/token/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank">Solscan</a>
+  </p>
+</footer>
+
+<script>
+// ─── COPY CA ───
+function copyCA(){
+  navigator.clipboard.writeText('9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump').then(()=>{
+    const btn=document.querySelector('.ca-copy');
+    btn.textContent='✅';setTimeout(()=>btn.textContent='📋',1500);
+  });
+}
+
+// ─── GAME ENGINE ───
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+const overlay=document.getElementById('game-overlay');
+const hudScore=document.getElementById('hud-score');
+const hudBest=document.getElementById('hud-best');
+const overlayTitle=document.getElementById('overlay-title');
+const overlaySub=document.getElementById('overlay-sub');
+const overlayScore=document.getElementById('overlay-score');
+const startBtn=document.getElementById('start-btn');
+
+// Responsive canvas
+function resizeCanvas(){
+  const w=canvas.parentElement.clientWidth;
+  canvas.style.width=w+'px';
+  canvas.style.height=Math.min(320,w*0.4)+'px';
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+const W=800, H=320;
+const GROUND=H-60;
+const GRAVITY=0.55;
+const JUMP=-12;
+
+let state='idle'; // idle | running | dead
+let score=0, frame=0, speed=5;
+
+// ─── Persistent best score ───
+let bestScore=parseInt(localStorage.getItem('ansem_best')||'0');
+hudBest.textContent=bestScore;
+
+// Bull
+const bull={
+  x:90, y:GROUND,
+  w:52, h:52,
+  vy:0,
+  grounded:true,
+  ducking:false,
+  dy:0,
+  jump(){if(this.grounded){this.vy=JUMP;this.grounded=false;}},
+  duck(on){this.ducking=on;this.dy=on?13:0;},
+  update(){
+    this.vy+=GRAVITY;
+    this.y+=this.vy;
+    if(this.y>=GROUND-this.dy){this.y=GROUND-this.dy;this.vy=0;this.grounded=true;}
+  },
+  get hitbox(){
+    const bw=this.ducking?80:72, bh=this.ducking?36:49;
+    return{x:this.x+8, y:this.y-bh+4, w:bw-16, h:bh-8};
+  }
+};
+
+let obstacles=[], collectibles=[], particles=[];
+
+const OBS_TYPES=[
+  {type:'candle',w:18,h:70,bodyH:50,wickT:12,wickB:8},
+  {type:'candle',w:18,h:50,bodyH:34,wickT:10,wickB:6},
+  {type:'candle',w:22,h:90,bodyH:62,wickT:18,wickB:10},
+  {type:'candle',w:14,h:40,bodyH:28,wickT:8, wickB:4},
+  {type:'candle',w:18,h:60,bodyH:42,wickT:12,wickB:6,cluster:true},
+];
+const COLLECTIBLE_DEFS=[
+  {type:'sol',w:22,h:22,gy:35,pts:50},
+  {type:'sol',w:22,h:22,gy:75,pts:50},
+  {type:'sol',w:22,h:22,gy:20,pts:100},
+];
+
+let nextObs=80, nextColl=120;
+
+let clouds=[
+  {x:200,y:40,s:0.7},{x:450,y:20,s:1},{x:680,y:55,s:0.5}
+];
+
+function spawnObstacle(){
+  const t=OBS_TYPES[Math.floor(Math.random()*OBS_TYPES.length)];
+  const count=t.cluster?2:1;
+  for(let i=0;i<count;i++){
+    obstacles.push({...t, x:W+i*(t.w+10), y:GROUND-t.h});
+  }
+}
+
+function spawnCollectible(){
+  const c=COLLECTIBLE_DEFS[Math.floor(Math.random()*COLLECTIBLE_DEFS.length)];
+  collectibles.push({...c, x:W, y:GROUND-c.h-c.gy});
+}
+
+function spawnParticle(x,y,color='#f39c12'){
+  for(let i=0;i<6;i++){
+    particles.push({
+      x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-2)*4,
+      alpha:1,color,size:4+Math.random()*4,
+      life:0,maxLife:30+Math.random()*20
+    });
+  }
+}
+
+function reset(){
+  score=0;frame=0;speed=5;
+  obstacles=[];collectibles=[];particles=[];
+  bull.y=GROUND;bull.vy=0;bull.grounded=true;bull.ducking=false;bull.dy=0;
+  nextObs=80;nextColl=140;
+}
+
+function startGame(){
+  reset();
+  state='running';
+  overlay.style.display='none';
+  overlayScore.style.display='none';
+}
+
+function gameOver(){
+  state='dead';
+  if(score>bestScore){
+    bestScore=score;
+    localStorage.setItem('ansem_best',bestScore);
+    hudBest.textContent=bestScore;
+  }
+  overlayTitle.textContent='REKT 💀';
+  overlaySub.textContent='The bear got you. Shake it off, degen.';
+  overlayScore.style.display='block';
+  overlayScore.textContent='Score: '+score+(score===bestScore&&score>0?' 🏆 NEW BEST!':'');
+  startBtn.innerHTML='Run Again <svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:15px;vertical-align:middle;margin-left:4px;" aria-hidden="true"><path d="M88,195 Q52,162 64,122 Q78,96 98,112" fill="none" stroke="#f39c12" stroke-width="5" stroke-linecap="round"/><ellipse cx="96" cy="109" rx="13" ry="9" fill="#f39c12" transform="rotate(-30 96 109)"/><ellipse cx="225" cy="215" rx="148" ry="86" fill="#111"/><ellipse cx="225" cy="215" rx="148" ry="86" fill="none" stroke="#f39c12" stroke-width="1.5" opacity="0.45"/><ellipse cx="308" cy="148" rx="58" ry="42" fill="#111"/><path d="M318,168 Q352,145 375,158 Q384,178 362,193 Q335,198 318,182Z" fill="#111"/><rect x="360" y="138" width="100" height="100" rx="20" fill="#111"/><rect x="360" y="138" width="100" height="100" rx="20" fill="none" stroke="#f39c12" stroke-width="2"/><ellipse cx="372" cy="152" rx="13" ry="20" fill="#111" stroke="#f39c12" stroke-width="1.5" transform="rotate(-18 372 152)"/><ellipse cx="455" cy="218" rx="24" ry="17" fill="#181818" stroke="#f39c12" stroke-width="1.5"/><circle cx="454" cy="225" r="7" fill="none" stroke="#f39c12" stroke-width="2.5"/><circle cx="408" cy="168" r="11" fill="#14F195"/><circle cx="410" cy="169" r="5.5" fill="#0a0a0a"/><path d="M378,140 Q356,82 398,68 Q404,104 388,138Z" fill="#f39c12"/><path d="M412,137 Q438,76 468,90 Q456,122 430,140Z" fill="#f39c12"/><rect x="115" y="286" width="26" height="48" rx="7" fill="#111"/><rect x="156" y="286" width="26" height="48" rx="7" fill="#111"/><rect x="258" y="286" width="26" height="48" rx="7" fill="#111"/><rect x="299" y="286" width="26" height="48" rx="7" fill="#111"/><rect x="113" y="328" width="30" height="11" rx="5" fill="#f39c12"/><rect x="154" y="328" width="30" height="11" rx="5" fill="#f39c12"/><rect x="256" y="328" width="30" height="11" rx="5" fill="#f39c12"/><rect x="297" y="328" width="30" height="11" rx="5" fill="#f39c12"/></svg>';
+  overlay.style.display='flex';
+}
+
+function rectsOverlap(a,b){
+  return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+}
+
+// ─── Rounded rect helper (cross-browser, no ctx.roundRect needed) ───
+function rrect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+// ── DRAW: Bull (matches hero SVG — black body, gold horns/hooves/nose-ring, green eye) ──
+function drawBull(px, py, ducking){
+  // px,py = bottom-left anchor (feet level)
+  // Scale the 500×340 SVG viewBox down to fit a ~72×49 game sprite
+  const SW=500, SH=340; // SVG viewbox
+  const TW=ducking?80:72, TH=ducking?36:49;
+  const sx=TW/SW, sy=TH/SH;
+  const ox=px, oy=py-TH; // top-left of sprite in canvas space
+
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(sx, sy);
+
+  // ── tail ──
+  ctx.save();
+  ctx.strokeStyle='#f39c12'; ctx.lineWidth=5/sx; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(88,195); ctx.quadraticCurveTo(52,162,64,122); ctx.quadraticCurveTo(78,96,98,112); ctx.stroke();
+  ctx.restore();
+  // tail tuft
+  ctx.save();
+  ctx.fillStyle='#f39c12';
+  ctx.translate(96,109); ctx.rotate(-30*Math.PI/180); ctx.scale(1,1);
+  ctx.beginPath(); ctx.ellipse(0,0,13,9,0,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // ── body ──
+  ctx.fillStyle='#111';
+  ctx.beginPath(); ctx.ellipse(225,215,148,86,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(243,156,18,0.45)'; ctx.lineWidth=1.5/sx;
+  ctx.beginPath(); ctx.ellipse(225,215,148,86,0,0,Math.PI*2); ctx.stroke();
+
+  // ── shoulder hump ──
+  ctx.fillStyle='#111';
+  ctx.beginPath(); ctx.ellipse(308,148,58,42,0,0,Math.PI*2); ctx.fill();
+
+  // ── neck ──
+  ctx.fillStyle='#111';
+  ctx.beginPath();
+  ctx.moveTo(318,168); ctx.quadraticCurveTo(352,145,375,158);
+  ctx.quadraticCurveTo(384,178,362,193); ctx.quadraticCurveTo(335,198,318,182); ctx.closePath(); ctx.fill();
+
+  // ── head ──
+  ctx.fillStyle='#111'; ctx.strokeStyle='#f39c12'; ctx.lineWidth=2/sx;
+  rrect(360,138,100,100,20); ctx.fill(); ctx.stroke();
+
+  // ── ear ──
+  ctx.fillStyle='#111'; ctx.strokeStyle='#f39c12'; ctx.lineWidth=1.5/sx;
+  ctx.save();
+  ctx.translate(372,152); ctx.rotate(-18*Math.PI/180);
+  ctx.beginPath(); ctx.ellipse(0,0,13,20,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // ── snout ──
+  ctx.fillStyle='#181818'; ctx.strokeStyle='#f39c12'; ctx.lineWidth=1.5/sx;
+  ctx.beginPath(); ctx.ellipse(455,218,24,17,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // nostrils
+  ctx.fillStyle='#2a2a2a';
+  ctx.beginPath(); ctx.ellipse(447,220,4.5,3.5,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(461,220,4.5,3.5,0,0,Math.PI*2); ctx.fill();
+  // nose ring
+  ctx.strokeStyle='#f39c12'; ctx.lineWidth=2.5/sx;
+  ctx.beginPath(); ctx.arc(454,225,7,0,Math.PI*2); ctx.stroke();
+
+  // ── eye ──
+  ctx.fillStyle='#14F195';
+  ctx.beginPath(); ctx.arc(408,168,11,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#0a0a0a';
+  ctx.beginPath(); ctx.arc(410,169,5.5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.55)';
+  ctx.beginPath(); ctx.arc(407,165,2.5,0,Math.PI*2); ctx.fill();
+
+  // ── horns ──
+  ctx.fillStyle='#f39c12';
+  ctx.beginPath(); ctx.moveTo(378,140); ctx.quadraticCurveTo(356,82,398,68); ctx.quadraticCurveTo(404,104,388,138); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(412,137); ctx.quadraticCurveTo(438,76,468,90); ctx.quadraticCurveTo(456,122,430,140); ctx.closePath(); ctx.fill();
+
+  // ── legs ──
+  const legColor='#111';
+  [[115,286],[156,286],[258,286],[299,286]].forEach(([lx,ly])=>{
+    ctx.fillStyle=legColor;
+    rrect(lx,ly,26,48,7); ctx.fill();
+  });
+  // ── hooves ──
+  ctx.fillStyle='#f39c12';
+  [[113,328],[154,328],[256,328],[297,328]].forEach(([lx,ly])=>{
+    rrect(lx,ly,30,11,5); ctx.fill();
+  });
+
+  // ── leg animation (running) ──
+  // handled by the scale transform — legs already move with the body
+
+  ctx.restore();
+}
+
+// ── DRAW: Bear candle ──
+function drawCandle(o){
+  const cx=o.x+o.w/2;
+  const bodyTop=o.y+o.wickT;
+  const bodyBot=o.y+o.wickT+o.bodyH;
+
+  ctx.strokeStyle='#ff4444';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx,o.y);ctx.lineTo(cx,bodyTop);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,bodyBot);ctx.lineTo(cx,bodyBot+o.wickB);ctx.stroke();
+
+  ctx.fillStyle='#e63030';
+  ctx.strokeStyle='#ff6666';
+  ctx.lineWidth=1.5;
+  ctx.fillRect(o.x,bodyTop,o.w,o.bodyH);
+  ctx.strokeRect(o.x,bodyTop,o.w,o.bodyH);
+
+  ctx.fillStyle='rgba(255,150,150,0.25)';
+  ctx.fillRect(o.x+2,bodyTop+2,4,o.bodyH-4);
+
+  ctx.fillStyle='#ff6666';
+  ctx.font='bold 9px monospace';
+  ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText('BEAR',cx,o.y-2);
+  ctx.textAlign='left';
+}
+
+// ── DRAW: SOL coin ──
+function drawCoin(c,f){
+  const cx=c.x+c.w/2,cy=c.y+c.h/2,r=c.w/2;
+  const pulse=0.9+0.1*Math.sin(f*0.12);
+  ctx.save();
+  ctx.translate(cx,cy);ctx.scale(pulse,pulse);ctx.translate(-cx,-cy);
+
+  ctx.fillStyle='#f39c12';
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#e67e22';
+  ctx.beginPath();ctx.arc(cx,cy,r-3,0,Math.PI*2);ctx.fill();
+
+  ctx.fillStyle='#ffeaa0';
+  ctx.font='bold '+r+'px monospace';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('S',cx,cy+1);
+
+  ctx.strokeStyle='rgba(243,200,50,0.6)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(cx,cy,r+3,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+}
+
+function drawCloud(cx,cy,s){
+  ctx.fillStyle='rgba(255,255,255,0.18)';
+  ctx.beginPath();ctx.ellipse(cx,cy,60*s,20*s,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx-25*s,cy+6*s,35*s,16*s,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx+25*s,cy+8*s,30*s,14*s,0,0,Math.PI*2);ctx.fill();
+}
+
+function gameLoop(){
+  requestAnimationFrame(gameLoop);
+
+  // clear
+  ctx.fillStyle='#0d0d0d';
+  ctx.fillRect(0,0,W,H);
+
+  // bg grid
+  ctx.strokeStyle='rgba(243,156,18,0.12)';ctx.lineWidth=1;
+  for(let i=0;i<W;i+=80){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}
+
+  // clouds
+  clouds.forEach(c=>{
+    drawCloud(c.x,c.y,c.s);
+    if(state==='running'){c.x-=speed*0.3;}
+    if(c.x<-100){c.x=W+100;c.y=20+Math.random()*60;}
+  });
+
+  // ground
+  ctx.fillStyle='rgba(243,156,18,0.7)';
+  ctx.fillRect(0,GROUND+4,W,3);
+  ctx.fillStyle='rgba(243,156,18,0.12)';
+  ctx.fillRect(0,GROUND+7,W,H-GROUND-7);
+
+  if(state==='running'){
+    frame++;
+    score=Math.floor(frame/4);
+    speed=5+frame/600;
+    hudScore.textContent=score;
+
+    if(--nextObs<=0){spawnObstacle();nextObs=Math.floor(80+Math.random()*60);}
+    if(--nextColl<=0){spawnCollectible();nextColl=Math.floor(100+Math.random()*80);}
+
+    bull.update();
+    bull.duck(keys['ArrowDown']||keys['s']);
+
+    // collision: obstacles
+    const bh=bull.hitbox;
+    for(let o of obstacles){
+      const bodyTop=o.y+o.wickT;
+      const oh={x:o.x+2,y:bodyTop,w:o.w-4,h:o.bodyH};
+      if(rectsOverlap(bh,oh)){gameOver();return;}
+    }
+
+    // collision: collectibles — coins only add to score, not frame
+    for(let i=collectibles.length-1;i>=0;i--){
+      const c=collectibles[i];
+      if(rectsOverlap(bh,{x:c.x,y:c.y,w:c.w,h:c.h})){
+        score+=c.pts;
+        spawnParticle(c.x+c.w/2,c.y+c.h/2);
+        collectibles.splice(i,1);
+      }
+    }
+
+    obstacles=obstacles.filter(o=>{o.x-=speed;return o.x>-80;});
+    collectibles=collectibles.filter(c=>{c.x-=speed;return c.x>-50;});
+  }
+
+  // draw obstacles
+  obstacles.forEach(o=>drawCandle(o));
+
+  // draw collectibles
+  collectibles.forEach(c=>drawCoin(c,frame));
+
+  // ─── Draw bull exactly once depending on state ───
+  if(state==='idle'){
+    const bob=Math.sin(Date.now()*0.003)*3;
+    drawBull(bull.x,GROUND+bob,false);
+  } else {
+    // running or dead — draw at physics position
+    drawBull(bull.x,bull.y,bull.ducking);
+  }
+
+  // particles
+  particles=particles.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.3;p.life++;p.alpha=1-p.life/p.maxLife;
+    if(p.alpha<=0)return false;
+    ctx.save();ctx.globalAlpha=p.alpha;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    return true;
+  });
+}
+
+// INPUT
+const keys={};
+document.addEventListener('keydown',e=>{
+  keys[e.code]=true;keys[e.key]=true;
+  if((e.code==='Space'||e.code==='ArrowUp')&&state==='running'){e.preventDefault();bull.jump();}
+  if(e.code==='Space'&&state!=='running'){startGame();}
+});
+document.addEventListener('keyup',e=>{keys[e.code]=false;keys[e.key]=false;});
+
+// Touch
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  if(state==='running')bull.jump();
+  else startGame();
+},{passive:false});
+
+gameLoop();
+</script>
+</body>
+  </html>
