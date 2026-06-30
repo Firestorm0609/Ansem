@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>$ANSEM — The Black Bull</title>
 <meta property="og:title" content="$ANSEM — The Black Bull"/>
-<meta property="og:description" content="The most based bull on Solana. We don't rug. We only run."/>
+<meta property="og:description" content="The coldest man breathing has revived the trenches."/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="$ANSEM — The Black Bull"/>
-<meta name="twitter:description" content="The most based bull on Solana. We don't rug. We only run."/>
+<meta name="twitter:description" content="The coldest man breathing has revived the trenches."/>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap');
 
@@ -145,7 +145,7 @@
   /* ─── GAME SECTION ─── */
   #game-section{
     padding:5rem 2rem;
-    max-width:900px;margin:0 auto;
+    max-width:1180px;margin:0 auto;
   }
   .section-eyebrow{
     font-family:'Space Mono',monospace;
@@ -162,6 +162,17 @@
     color:rgba(245,245,240,0.5);
     font-size:1rem;line-height:1.6;
     margin-bottom:2rem;max-width:500px;
+  }
+
+  /* ─── GAME LAYOUT (canvas + leaderboard side by side) ─── */
+  #game-layout{
+    display:flex;
+    gap:1.5rem;
+    align-items:flex-start;
+  }
+  #game-layout #game-wrapper{
+    flex:1 1 0;
+    min-width:0;
   }
 
   /* ─── GAME CANVAS ─── */
@@ -258,6 +269,17 @@
     display:flex;gap:0.5rem;align-items:center;
     margin:0.5rem 0 0.25rem;
   }
+  .username-field{
+    position:relative;
+    display:flex;align-items:center;
+  }
+  .username-at{
+    position:absolute;left:0.9rem;
+    color:rgba(243,156,18,0.6);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.9rem;font-weight:700;
+    pointer-events:none;
+  }
   #username-input{
     background:var(--mid);
     border:1px solid rgba(243,156,18,0.35);
@@ -265,7 +287,7 @@
     color:var(--white);
     font-family:'Space Grotesk',sans-serif;
     font-size:0.9rem;
-    padding:0.6rem 0.9rem;
+    padding:0.6rem 0.9rem 0.6rem 1.6rem;
     width:200px;
     outline:none;
     transition:border-color 0.2s;
@@ -275,8 +297,11 @@
 
   /* ─── LEADERBOARD ─── */
   #leaderboard-wrap{
-    width:100%;max-width:340px;
-    margin-top:1rem;
+    flex:0 0 280px;
+    background:var(--gray);
+    border:1px solid rgba(243,156,18,0.2);
+    border-radius:8px;
+    padding:1.2rem;
   }
   .lb-title{
     font-family:'Space Mono',monospace;
@@ -297,9 +322,20 @@
     0%,100%{opacity:1;}
     50%{opacity:0.3;}
   }
+  .lb-online{
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    color:rgba(245,245,240,0.4);
+    margin-bottom:0.6rem;
+  }
+  .lb-online span{
+    color:var(--sol-green);
+    font-weight:700;
+  }
   #lb-list{
     display:flex;flex-direction:column;gap:3px;
-    max-height:200px;overflow-y:auto;
+    max-height:340px;overflow-y:auto;
   }
   #lb-list::-webkit-scrollbar{width:3px;}
   #lb-list::-webkit-scrollbar-track{background:transparent;}
@@ -357,6 +393,11 @@
     font-family:'Space Mono',monospace;
     font-size:1.1rem;color:var(--bull-gold);
     margin:0.4rem 0 0.75rem;
+  }
+
+  @media(max-width:850px){
+    #game-layout{flex-direction:column;}
+    #leaderboard-wrap{flex:1 1 auto;width:100%;}
   }
 
   @media(max-width:600px){
@@ -444,7 +485,7 @@
     </svg>
   </div>
   <h1 class="hero-title">Ansem the<br><span>Black Bull</span></h1>
-  <p class="hero-sub">The most based bull on Solana. We don't rug. We only run.</p>
+  <p class="hero-sub">The coldest man breathing has revived the trenches.</p>
   <div class="hero-ctas">
     <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank" class="btn-primary">Buy $ANSEM on Pump.fun</a>
     <button class="btn-secondary" onclick="document.getElementById('game-section').scrollIntoView({behavior:'smooth'});setTimeout(()=>{screenDead.style.display='none';screenStart.style.display='block';},400);">Play Bull Run 🎮</button>
@@ -462,49 +503,55 @@
   <h2 class="section-title">Bull Run</h2>
   <p class="section-desc">Dodge bear candles. Collect SOL coins. How long can the bull run?</p>
 
-  <div id="game-wrapper">
-    <div id="game-hud">
-      <div class="hud-item">SCORE <span id="hud-score">0</span></div>
-      <div class="hud-item">BULL RUN</div>
-      <div class="hud-item">BEST <span id="hud-best">0</span></div>
+  <div id="game-layout">
+    <div id="game-wrapper">
+      <div id="game-hud">
+        <div class="hud-item">SCORE <span id="hud-score">0</span></div>
+        <div class="hud-item">BULL RUN</div>
+        <div class="hud-item">BEST <span id="hud-best">0</span></div>
+      </div>
+      <canvas id="gameCanvas" width="800" height="320"></canvas>
+      <div id="game-overlay">
+
+        <!-- START SCREEN -->
+        <div id="screen-start">
+          <h2>Bull Run</h2>
+          <p>Dodge bear candles · collect SOL coins · go global</p>
+          <div class="username-row">
+            <div class="username-field">
+              <span class="username-at">@</span>
+              <input id="username-input" type="text" maxlength="15" placeholder="your_handle" autocomplete="off" spellcheck="false"/>
+            </div>
+            <button class="btn-primary" id="start-btn" onclick="handleStart()">Run</button>
+          </div>
+          <p id="username-error" style="color:#e63030;font-size:0.78rem;min-height:1.2em;"></p>
+        </div>
+
+        <!-- DEAD SCREEN -->
+        <div id="screen-dead" style="display:none">
+          <h2 id="overlay-title">REKT 💀</h2>
+          <div class="score-display" id="overlay-score"></div>
+          <button class="btn-primary" id="again-btn" onclick="handleStart()">Run Again</button>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="game-controls">
+          <span class="key-hint">SPACE / ↑ — Jump</span>
+          <span class="key-hint">↓ — Duck</span>
+          <span class="key-hint">TAP — Jump</span>
+        </div>
+
+      </div>
     </div>
-    <canvas id="gameCanvas" width="800" height="320"></canvas>
-    <div id="game-overlay">
 
-      <!-- START SCREEN -->
-      <div id="screen-start">
-        <h2>Bull Run</h2>
-        <p>Dodge bear candles · collect SOL coins · top the board</p>
-        <div class="username-row">
-          <input id="username-input" type="text" maxlength="16" placeholder="Enter your name…" autocomplete="off" spellcheck="false"/>
-          <button class="btn-primary" id="start-btn" onclick="handleStart()">Run</button>
-        </div>
-        <p id="username-error" style="color:#e63030;font-size:0.78rem;min-height:1.2em;"></p>
+    <!-- LEADERBOARD — always visible, outside the game canvas -->
+    <div id="leaderboard-wrap">
+      <div class="lb-title">
+        <span class="lb-live-dot"></span>
+        Leaderboard
       </div>
-
-      <!-- DEAD SCREEN -->
-      <div id="screen-dead" style="display:none">
-        <h2 id="overlay-title">REKT 💀</h2>
-        <div class="score-display" id="overlay-score"></div>
-        <button class="btn-primary" id="again-btn" onclick="handleStart()">Run Again</button>
-      </div>
-
-      <!-- LEADERBOARD -->
-      <div id="leaderboard-wrap">
-        <div class="lb-title">
-          <span class="lb-live-dot"></span>
-          Global Leaderboard
-        </div>
-        <div id="lb-list"><div class="lb-loading">loading…</div></div>
-      </div>
-
-      <!-- CONTROLS -->
-      <div class="game-controls">
-        <span class="key-hint">SPACE / ↑ — Jump</span>
-        <span class="key-hint">↓ — Duck</span>
-        <span class="key-hint">TAP — Jump</span>
-      </div>
-
+      <div class="lb-online" id="lb-online">— playing now</div>
+      <div id="lb-list"><div class="lb-loading">loading…</div></div>
     </div>
   </div>
 </section>
@@ -549,12 +596,46 @@
   </p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ╔══════════════════════════════════════════════════════════╗
 // ║  SUPABASE CONFIG — paste your values from supabase.com  ║
 // ╚══════════════════════════════════════════════════════════╝
 const SUPABASE_URL  = 'https://ubnfovllwlglqfvlcxxk.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibmZvdmxsd2xnbHFmdmxjeHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjU4MjcsImV4cCI6MjA5ODM0MTgyN30.ksCdXPC7y6BR-yGDlOZsOyLfK3hTg2Eicx8GcpUTHNI';
+
+// ─── Realtime Presence: real count of people with the page open right now ───
+const sbClient = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+  : null;
+
+const lbOnlineEl = document.getElementById('lb-online');
+
+function setOnlineCount(n){
+  if (!lbOnlineEl) return;
+  lbOnlineEl.innerHTML = `<span>${n}</span> ${n===1?'person':'people'} playing now`;
+}
+
+if (sbClient) {
+  const presenceChannel = sbClient.channel('ansem-presence', {
+    config: { presence: { key: crypto.randomUUID() } }
+  });
+
+  presenceChannel
+    .on('presence', { event: 'sync' }, () => {
+      const state = presenceChannel.presenceState();
+      // presenceState groups by key; count of distinct keys = distinct visitors
+      const count = Object.keys(state).length;
+      setOnlineCount(count);
+    })
+    .subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await presenceChannel.track({ online_at: new Date().toISOString() });
+      }
+    });
+} else {
+  setOnlineCount(0);
+}
 
 // ─── Minimal Supabase REST client (no npm needed) ───────────
 const sb = {
@@ -577,26 +658,37 @@ const sb = {
 
   async upsertScore(name, score) {
     try {
-      // Use upsert: if name exists, only update if new score is higher
-      // We do this with a raw POST + onConflict + ignoreDuplicates trick
+      const key = name.toLowerCase();
       // Strategy: fetch existing first, only update if higher
       const existing = await fetch(
-        `${SUPABASE_URL}/rest/v1/leaderboard?name=ilike.${encodeURIComponent(name)}&select=score`,
+        `${SUPABASE_URL}/rest/v1/leaderboard?name=eq.${encodeURIComponent(key)}&select=score`,
         { headers: sb.headers }
       );
       const rows = existing.ok ? await existing.json() : [];
 
       if (rows.length === 0) {
         // Insert new row
-        await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
           method: 'POST',
           headers: { ...sb.headers, 'Prefer': 'return=minimal' },
           body: JSON.stringify({ name, score })
         });
+        // If insert failed because another tab/request just created this name
+        // (unique index race), fall back to an update instead of losing the score.
+        if (!res.ok) {
+          await fetch(
+            `${SUPABASE_URL}/rest/v1/leaderboard?name=eq.${encodeURIComponent(key)}`,
+            {
+              method: 'PATCH',
+              headers: { ...sb.headers, 'Prefer': 'return=minimal' },
+              body: JSON.stringify({ score, updated_at: new Date().toISOString() })
+            }
+          );
+        }
+        return true;
       } else if (score > rows[0].score) {
-        // Update only if higher
         await fetch(
-          `${SUPABASE_URL}/rest/v1/leaderboard?name=ilike.${encodeURIComponent(name)}`,
+          `${SUPABASE_URL}/rest/v1/leaderboard?name=eq.${encodeURIComponent(key)}`,
           {
             method: 'PATCH',
             headers: { ...sb.headers, 'Prefer': 'return=minimal' },
@@ -605,7 +697,7 @@ const sb = {
         );
         return true; // is new best
       }
-      return rows.length === 0 || score > rows[0].score;
+      return false;
     } catch(e) { return false; }
   }
 };
@@ -642,7 +734,7 @@ async function renderLeaderboard(highlightName='') {
     const isMe = highlightName && e.name.toLowerCase() === highlightName.toLowerCase();
     return `<div class="lb-row${isMe?' lb-me':''}">
       <span class="lb-rank ${medals[i]||''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
-      <span class="lb-name${isMe?' lb-me-name':''}">${escHtml(e.name)}</span>
+      <span class="lb-name${isMe?' lb-me-name':''}">@${escHtml(e.name)}</span>
       <span class="lb-score">${e.score.toLocaleString()}</span>
     </div>`;
   }).join('');
@@ -683,7 +775,7 @@ const GRAVITY = 0.55;
 const JUMP = -12;
 
 let state = 'idle';
-let score = 0, frame = 0, speed = 5;
+let score = 0, frame = 0, speed = 5, coinBonus = 0;
 
 let bestScore = parseInt(localStorage.getItem('ansem_best') || '0');
 hudBest.textContent = bestScore;
@@ -759,16 +851,18 @@ function spawnParticle(x,y,color='#f39c12'){
 }
 
 function reset(){
-  score=0;frame=0;speed=5;
+  score=0;frame=0;speed=5;coinBonus=0;
   obstacles=[];collectibles=[];particles=[];
   bull.y=GROUND;bull.vy=0;bull.grounded=true;bull.ducking=false;bull.dy=0;
   nextObs=80;nextColl=140;
 }
 
 function handleStart(){
-  const name = (usernameInput ? usernameInput.value.trim() : currentPlayer) || currentPlayer;
+  let name = (usernameInput ? usernameInput.value.trim() : currentPlayer) || currentPlayer;
+  // Normalize as an X/Twitter handle: drop any leading @, strip disallowed chars
+  name = name.replace(/^@+/, '').replace(/[^A-Za-z0-9_]/g, '').slice(0, 15);
   if (!name) {
-    if (usernameError) usernameError.textContent = 'Pick a name first!';
+    if (usernameError) usernameError.textContent = 'Enter your X handle first!';
     usernameInput && usernameInput.focus();
     return;
   }
@@ -959,7 +1053,7 @@ function gameLoop(){
 
   if(state==='running'){
     frame++;
-    score=Math.floor(frame/4);
+    score=Math.floor(frame/4)+coinBonus;
     speed=5+frame/600;
     hudScore.textContent=score;
 
@@ -979,7 +1073,7 @@ function gameLoop(){
     for(let i=collectibles.length-1;i>=0;i--){
       const c=collectibles[i];
       if(rectsOverlap(bh,{x:c.x,y:c.y,w:c.w,h:c.h})){
-        score+=c.pts;
+        coinBonus+=c.pts;
         spawnParticle(c.x+c.w/2,c.y+c.h/2);
         collectibles.splice(i,1);
       }
