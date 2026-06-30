@@ -191,7 +191,7 @@
     </svg>
   </div>
   <h1 class="hero-title">Ansem the<br><span>Black Bull</span></h1>
-  <p class="hero-sub">The coldest nigga breathing has revived the trenches.</p>
+  <p class="hero-sub">The coldest man breathing has revived the trenches.</p>
   <div class="hero-ctas">
     <a href="https://pump.fun/coin/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump" target="_blank" class="btn-primary">Buy $ANSEM on Pump.fun</a>
     <button class="btn-secondary" onclick="document.getElementById('game-section').scrollIntoView({behavior:'smooth'});setTimeout(()=>{screenDead.style.display='none';screenStart.style.display='block';},400);">Play Bull Run 🎮</button>
@@ -206,7 +206,7 @@
 <section id="game-section">
   <p class="section-eyebrow">Minigame</p>
   <h2 class="section-title">Bull Run</h2>
-  <p class="section-desc">Dodge bear candles. Duck under pumps. Collect coins. How long can the bull run?</p>
+  <p class="section-desc">Dodge bear candles. Duck under dumps. Collect SOL coins. How long can the bull run?</p>
 
   <div id="game-layout">
     <div id="game-wrapper">
@@ -237,7 +237,7 @@
         </div>
 
         <div class="game-controls">
-          <span class="key-hint">SPACE/↑ Jump · ↓↓/SS Duck</span>
+          <span class="key-hint">SPACE/↑ Jump · ALT Duck</span>
           <span class="key-hint">Mobile: Tap Jump · 2× Tap Duck</span>
 
         </div>
@@ -988,15 +988,17 @@ const keys={};
 document.addEventListener('keydown',e=>{
   keys[e.code]=true;keys[e.key]=true;
   if((e.code==='Space'||e.code==='ArrowUp')&&state==='running'){e.preventDefault();bull.jump();}
-  if((e.code==='ArrowDown'||e.code==='KeyS')&&state==='running'){
-    const now = performance.now();
-    if(now - lastDuckKeyTime < DOUBLE_TAP_MS){ duckActiveUntil = now + DUCK_WINDOW_MS; }
-    lastDuckKeyTime = now;
+  if((e.code==='AltLeft'||e.code==='AltRight')&&state==='running'){
+    e.preventDefault();
+    duckActiveUntil = Infinity;
   }
   if(e.code==='Space'&&state==='dead'){handleStart();}
   if(e.code==='Enter'&&state!=='running'){handleStart();}
 });
-document.addEventListener('keyup',e=>{keys[e.code]=false;keys[e.key]=false;});
+document.addEventListener('keyup',e=>{
+  keys[e.code]=false;keys[e.key]=false;
+  if(e.code==='AltLeft'||e.code==='AltRight'){ duckActiveUntil = 0; }
+});
 
 // Ducking is triggered by a double-tap (keyboard ↓/S, or double-tapping the
 // canvas itself on mobile) rather than being held. A successful double-tap
